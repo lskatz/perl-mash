@@ -4,7 +4,6 @@ MANIFEST			This list of files
 t/00_env.t
 t/01_makeSketches.t
 t/02_readSketches.t
-t/data/
 t/data/PNUSAL003567_R1_.fastq.gz
 t/data/PNUSAL003567_R1_.fastq.gz.msh
 t/data/PNUSAL003567_R2_.fastq.gz

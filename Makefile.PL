@@ -27,6 +27,7 @@ WriteMakefile1(
     'threads::shared'=> 0,
     'Thread::Queue'  => 0,
     'JSON'           => 2.93,
+    'Encode'         => 2.21,
     #'Bio::Kmer'      => 0.19,
   },
   BUILD_REQUIRES => {
