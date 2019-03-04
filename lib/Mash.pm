@@ -30,7 +30,7 @@ A module to read `mash info` output and transform it
 
   use strict;
   use warnings;
-  use Mash
+  use Mash;
 
   # Quick example
 
@@ -50,7 +50,7 @@ This is a module to read mash files produced by the Mash executable. For more in
 
 =over
 
-=item Mash->new(\@listOfFiles,\%options);
+=item Mash->new("filename.msh",\%options);
 
 Create a new instance of Mash.  One object per set of files.
 
@@ -91,9 +91,9 @@ sub new{
 
 =over
 
-=item $msh->addMashFile()
+=item $msh->file("filename.msh")
 
-Returns a hash ref that describes a single mash file. Updates the Mash object with this info. This method is ordinarily not used externally to the object.
+Changes which file is used in the object and updates internal object information. This method is ordinarily used internally only.
 
   Arguments: One mash file
   Returns:   self
@@ -139,7 +139,7 @@ sub file{
 
 =over
 
-=item $msh->dist()
+=item $msh->dist($msh2)
 
 Returns a hash describing distances between sketches represented by
 this object and another object. If there are multiple sketches per
@@ -195,7 +195,7 @@ sub mashDist{
 
 =over
 
-=item Mash::raw_mash_distance()
+=item Mash::raw_mash_distance($array1, $array2)
 
 Returns the number of sketches in common and the total number of sketches between two lists.
 The return type is an array of two elements.
