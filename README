@@ -6,7 +6,7 @@ SYNOPSIS
 
       use strict;
       use warnings;
-      use Mash
+      use Mash;
 
       # Quick example
 
@@ -25,22 +25,21 @@ DESCRIPTION
     files.
 
 METHODS
-    Mash->new(\@listOfFiles,\%options);
+    Mash->new("filename.msh",\%options);
         Create a new instance of Mash. One object per set of files.
 
           Arguments:  Sketch filename
                       Hash of options (none so far)
           Returns:    Mash object
 
-    $msh->addMashFile()
-        Returns a hash ref that describes a single mash file. Updates the
-        Mash object with this info. This method is ordinarily not used
-        externally to the object.
+    $msh->file("filename.msh")
+        Changes which file is used in the object and updates internal object
+        information. This method is ordinarily used internally only.
 
           Arguments: One mash file
           Returns:   self
 
-    $msh->dist()
+    $msh->dist($msh2)
         Returns a hash describing distances between sketches represented by
         this object and another object. If there are multiple sketches per
         object, then all sketches in this object will be compared against
@@ -51,7 +50,7 @@ METHODS
 
         Aliases: distance(), mashDist()
 
-    Mash::raw_mash_distance()
+    Mash::raw_mash_distance($array1, $array2)
         Returns the number of sketches in common and the total number of
         sketches between two lists. The return type is an array of two
         elements.
