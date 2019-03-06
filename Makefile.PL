@@ -10,7 +10,7 @@ use ExtUtils::MakeMaker;
 my $preop =
   'perldoc -uT $(VERSION_FROM) | tee $(DISTVNAME)/README.pod > README.pod;' .
   'pod2text README.pod | tee $(DISTVNAME)/README > README;' .
-  '(cd lib/capnproto-c++-0.7.0 && ./configure --prefix=$(realpath ..)/capnproto && make -j2 check && make install);' .
+  '(cd lib && zxvf capnproto-c++-0.7.0.tar.gz && cd capnproto-c++-0.7.0 && ./configure --prefix=$(realpath ..)/capnproto && make -j2 check && make install);' .
   '(cd bin/Mash && sh bootstrap.sh && ./configure --prefix=$(pwd) --with-capnp=$(pwd)/../../lib/capnproto && make -j 2);' .
 '';
 
