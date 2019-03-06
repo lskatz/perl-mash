@@ -1,0 +1,9 @@
+language: perl
+perl:
+  - "5.24-shrplib"
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install g++-5 gcc-5
+before_script:
+  - PATH=$PATH:./bin/Mash
+
