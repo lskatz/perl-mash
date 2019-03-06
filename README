@@ -32,11 +32,24 @@ METHODS
                       Hash of options (none so far)
           Returns:    Mash object
 
-    $msh->file("filename.msh")
+    $msh->loadMsh("filename.msh")
         Changes which file is used in the object and updates internal object
         information. This method is ordinarily used internally only.
 
           Arguments: One mash file
+          Returns:   self
+
+    $msh->loadJson("filename.msh")
+        Changes which file is used in the object and updates internal object
+        information. This method is ordinarily used internally only.
+
+          Arguments: One JSON file describing a Mash sketch
+          Returns:   self
+
+    $msh->writeJson("filename.msh")
+        Writes contents to a file in JSON format
+
+          Arguments: One filename
           Returns:   self
 
     $msh->dist($msh2)

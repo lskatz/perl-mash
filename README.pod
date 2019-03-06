@@ -47,11 +47,43 @@ Create a new instance of Mash.  One object per set of files.
 
 =over
 
-=item $msh->file("filename.msh")
+=item $msh->loadMsh("filename.msh")
 
 Changes which file is used in the object and updates internal object information. This method is ordinarily used internally only.
 
   Arguments: One mash file
+  Returns:   self
+
+=back
+
+
+=cut
+
+=pod
+
+=over
+
+=item $msh->loadJson("filename.msh")
+
+Changes which file is used in the object and updates internal object information. This method is ordinarily used internally only.
+
+  Arguments: One JSON file describing a Mash sketch
+  Returns:   self
+
+=back
+
+
+=cut
+
+=pod
+
+=over
+
+=item $msh->writeJson("filename.msh")
+
+Writes contents to a file in JSON format
+
+  Arguments: One filename
   Returns:   self
 
 =back
