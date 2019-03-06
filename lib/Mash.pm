@@ -32,15 +32,22 @@ A module to read `mash info` output and transform it
   use warnings;
   use Mash;
 
-  # Quick example
-
   # Sketch all fastq files into one mash file.
+  # Mash sketching is not implemented in this module.
   system("mash sketch *.fastq.gz > all.msh");
   die if $?;
+
   # Read the mash file.
   my $msh = Mash->new("all.msh");
   # All-vs-all distances
   my $distHash = $msh->dist($msh);
+
+  # Read a mash file, write it to a json-formatted file
+  my $msh2 = Mash->new("all.msh");
+  $msh2->writeJson("all.json");
+  # Read the json file
+  my $mashJson = Mash->new("all.json");
+  my $dist = $msh2->dist($mashJson); # yields a zero distance
 
 =head1 DESCRIPTION
 
@@ -54,7 +61,7 @@ This is a module to read mash files produced by the Mash executable. For more in
 
 Create a new instance of Mash.  One object per set of files.
 
-  Arguments:  Sketch filename
+  Arguments:  Sketch filename (valid types/extensions are .msh, .json, .json.gz)
               Hash of options (none so far)
   Returns:    Mash object
 
@@ -200,7 +207,7 @@ sub loadJson{
 
 =over
 
-=item $msh->writeJson("filename.msh")
+=item $msh->writeJson("filename.json")
 
 Writes contents to a file in JSON format
 
@@ -224,7 +231,13 @@ sub writeJson{
   for my $key(qw(kmer preserveCase alphabet canonical sketchSize hashType hashBits hashSeed sketches)){
     $$hash{$key} = $$self{$key};
   }
-  open(my $fh, ">", $filename) or die "ERROR: could not write to $filename: $!";
+
+  my $fh;
+  if($filename=~/\.gz$/){
+    open($fh, " | gzip -c > $filename") or die "ERROR: could not write gzipped contents to $filename: $!";
+  } else {
+    open($fh, ">", $filename) or die "ERROR: could not write to $filename: $!";
+  }
   print $fh $json->encode($hash);
   close $fh;
 
@@ -270,8 +283,14 @@ sub dist{
       my $toName   = $$other{sketches}[$j]{name};
 
       my ($common, $total) = raw_mash_distance($fromHashes, $toHashes);
+      if($total == 0){
+        die "Internal error: total kmers compared between $fromName and $toName were zero!";
+      }
       my $jaccard = $common/$total;
-      my $mashDist= -1/$k * log(2*$jaccard / (1+$jaccard));
+      my $mashDist = 0; # by default
+      if($jaccard > 0){
+        $mashDist= -1/$k * log(2*$jaccard / (1+$jaccard));
+      }
       $mashDist = sprintf("%0.7f", $mashDist); # rounding to maintain compatibility with exec
       $dist{$fromName}{$toName} = $mashDist;
       $dist{$toName}{$fromName} = $mashDist;
@@ -295,6 +314,8 @@ sub mashDist{
 
 Returns the number of sketches in common and the total number of sketches between two lists.
 The return type is an array of two elements.
+This function is used internally with $msh->dist and assumes that the 
+hashes are already sorted.
 
   Arguments: A list of integers
              A list of integers
@@ -316,40 +337,38 @@ The return type is an array of two elements.
 sub raw_mash_distance{
   my($hashes1, $hashes2) = @_;
 
-  my @sketch1 = sort {$a <=> $b} @$hashes1;
-  my @sketch2 = sort {$a <=> $b} @$hashes2;
+  #my @sketch1 = sort {$a <=> $b} @$hashes1;
+  #my @sketch2 = sort {$a <=> $b} @$hashes2;
 
   my $i      = 0;
   my $j      = 0;
   my $common = 0;
   my $total  = 0;
 
-  my $sketch_size = @sketch1;
-  while($total < $sketch_size && $i < @sketch1 && $j < @sketch2){
-    my $ltgt = ($sketch1[$i] <=> $sketch2[$j]); # -1 if sketch1 is less than, +1 if sketch1 is greater than
+  my $sketch_size = @$hashes1;
+  my $sketch_size2= @$hashes2;
+  while($total < $sketch_size && $i < $sketch_size && $j < $sketch_size2){
 
-    if($ltgt == -1){
-      $i += 1;
-    } elsif($ltgt == 1){
-      $j += 1;
-    } elsif($ltgt==0) {
-      $i += 1;
-      $j += 1;
-      $common += 1;
-    } else {
-      die "Internal error";
-    }
+    if($$hashes1[$i] < $$hashes2[$j]){
+      $i+=1;
+    } elsif($$hashes1[$i] > $$hashes2[$j]){
+      $j+=1;
+    } elsif($$hashes1[$i] == $$hashes2[$j]){
+      $i+=1;
+      $j+=1;
+      $common+=1;
+    } 
 
     $total += 1;
   }
 
   if($total < $sketch_size){
-    if($i < @sketch1){
-      $total += @sketch1 - 1;
+    if($i < $sketch_size){
+      $total += $sketch_size - 1;
     }
 
-    if($j < @sketch2){
-      $total += @sketch2 - 1;
+    if($j < $sketch_size2){
+      $total += $sketch_size2 - 1;
     }
 
     if($total > $sketch_size){
