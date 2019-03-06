@@ -47,7 +47,7 @@ if($mashExe){
   };
 }
 
-note "Mash executable was found at $mashExe";
+diag "Mash executable was found at $mashExe";
 
 sub which{
   my($exec)=@_;
