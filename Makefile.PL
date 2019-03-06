@@ -10,15 +10,13 @@ use ExtUtils::MakeMaker;
 my $preop =
   'perldoc -uT $(VERSION_FROM) | tee $(DISTVNAME)/README.pod > README.pod;' .
   'pod2text README.pod | tee $(DISTVNAME)/README > README;' .
-  'pushd lib && tar zxvf capnproto-c++-0.7.0.tar.gz && cd capnproto-c++-0.7.0 && ./configure --prefix=$(realpath ..)/capnproto && make -j2 check && make install; popd;' .
-  'pushd bin && tar zxvf v2.1.1.tar.gz && cd Mash-2.1.1 && sh bootstrap.sh && ./configure --prefix=$(pwd) --with-capnp=$(pwd)/../../lib/capnproto && make -j 2; popd;' .
 '';
 
 WriteMakefile1(
   NAME         => 'Mash',
   VERSION_FROM => 'lib/Mash.pm',
   EXE_FILES    => [
-    "bin/Mash/mash",
+    #"bin/Mash/mash",
   ],
   PREREQ_PM    => {
     # Core modules

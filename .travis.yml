@@ -6,8 +6,9 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install g++-5 gcc-5
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5
-  - (cd lib && tar zxvf capnproto-c++-0.7.0.tar.gz && cd capnproto-c++-0.7.0 && ./configure --prefix=$(realpath ..)/capnproto && make -j2 check && make install)
-  - (cd bin && tar zxvf v2.1.1.tar.gz && cd Mash-2.1.1 && sh bootstrap.sh && ./configure --prefix=$(pwd) --with-capnp=$(pwd)/../../lib/capnproto && make -j 2)
+  - BASE_DIR=$(pwd); echo $BASE_DIR;
+  - (cd lib && tar zxvf capnproto-c++-0.7.0.tar.gz && cd capnproto-c++-0.7.0 && ./configure --prefix=$Base_DIR/lib/capnproto && make -j2 check && make install)
+  - (cd bin && tar zxvf v2.1.1.tar.gz && cd Mash-2.1.1 && sh bootstrap.sh && ./configure --prefix=$BASE_DIR/bin/Mash --with-capnp=$(pwd)/../../lib/capnproto && make -j 2)
 before_script:
-  - PATH=$PATH:./bin/Mash
+  - PATH=$PATH:$BASE_DIR/bin/Mash
 
