@@ -9,7 +9,7 @@ use Data::Dumper;
 use JSON ();
 use Encode qw/encode decode/;
 
-our $VERSION = 0.1;
+our $VERSION = 0.2;
 
 our @EXPORT_OK = qw(raw_mash_distance);
 
@@ -68,6 +68,7 @@ sub new{
   my $self={
     file      => $filename,
     kmer      => -1, # eg, 21
+    preserveCase=>-1,# eg, false
     alphabet  => "", # eg, AGCT
     canonical => -1, # eg, true/false
     sketchSize=> -1, # eg, 1000
@@ -81,7 +82,18 @@ sub new{
                      #  hashes  => list of integers
   };
   bless($self,$class);
-  $self->file($filename);
+
+  if(!defined($filename)){
+    die "ERROR: no file was given to ".$class."->new";
+    return {};
+  }
+  if(!-e $filename){
+    die "ERROR: could not find file $filename";
+  }
+
+  $self->loadMsh($filename)
+    or $self->loadJson($filename)
+    or die "ERROR: could not load $filename as either msh or json";
 
   return $self;
 }
@@ -91,7 +103,7 @@ sub new{
 
 =over
 
-=item $msh->file("filename.msh")
+=item $msh->loadMsh("filename.msh")
 
 Changes which file is used in the object and updates internal object information. This method is ordinarily used internally only.
 
@@ -102,25 +114,20 @@ Changes which file is used in the object and updates internal object information
 
 =cut
 
-sub file{
+sub loadMsh{
   my($self,$msh)=@_;
   
-  if(!   $msh){
-    die "ERROR: no file was given to \$self->file";
-    return {};
-  }
-  if(!-e $msh){
-    die "ERROR: could not find file $msh";
-  }
-
   my $json=JSON->new;
   $json->utf8;           # If we only expect characters 0..255. Makes it fast.
   $json->allow_nonref;   # can convert a non-reference into its corresponding string
   $json->allow_blessed;  # encode method will not barf when it encounters a blessed reference
   $json->pretty;         # enables indent, space_before and space_after
 
-  my $jsonStr = `mash info -d $msh`;
-  die "ERROR running mash on $msh" if $?;
+  my $jsonStr = `mash info -d $msh 2>/dev/null`;
+  #die "ERROR running mash on $msh" if $?;
+  if($?){
+    return 0;
+  }
 
   # Need to check for valid utf8 or not
   eval{ my $strCopy=$jsonStr; decode('utf8', $strCopy, Encode::FB_CROAK) }
@@ -128,10 +135,99 @@ sub file{
 
   my $mashInfo = $json->decode($jsonStr);
 
-  for my $key(qw(kmer alphabet canonical sketchSize= hashType hashBits hashSeed sketches)){
+  for my $key(qw(kmer preserveCase alphabet canonical sketchSize hashType hashBits hashSeed sketches)){
     $$self{$key} = $$mashInfo{$key};
   }
   
+  return $self;
+}
+
+=pod
+
+=over
+
+=item $msh->loadJson("filename.msh")
+
+Changes which file is used in the object and updates internal object information. This method is ordinarily used internally only.
+
+  Arguments: One JSON file describing a Mash sketch
+  Returns:   self
+
+=back
+
+=cut
+
+sub loadJson{
+  my($self,$filename)=@_;
+  
+  my $json=JSON->new;
+  $json->utf8;           # If we only expect characters 0..255. Makes it fast.
+  $json->allow_nonref;   # can convert a non-reference into its corresponding string
+  $json->allow_blessed;  # encode method will not barf when it encounters a blessed reference
+  $json->pretty;         # enables indent, space_before and space_after
+
+  my $jsonStr="";
+  my $fh;
+  if($filename=~/\.gz$/i){
+    open($fh, "gzip -cd '$filename' |") or die "ERROR: could not gzip -cd $filename: $!";
+  } else {
+    open($fh, $filename) or die "ERROR: could not read $filename: $!";
+  }
+  while(<$fh>){
+    $jsonStr.=$_;
+  }
+  close $fh;
+
+  # Need to check for valid utf8 or not
+  eval{ my $strCopy=$jsonStr; decode('utf8', $strCopy, Encode::FB_CROAK) }
+    or die "ERROR: this file has non-utf8 characters: $filename";
+
+  my $mashInfo = eval{
+    $json->decode($jsonStr);
+  };
+  if($@){
+    return 0;
+  }
+
+  for my $key(qw(kmer preserveCase alphabet canonical sketchSize hashType hashBits hashSeed sketches)){
+    $$self{$key} = $$mashInfo{$key};
+  }
+
+  return $self;
+}
+
+=pod
+
+=over
+
+=item $msh->writeJson("filename.msh")
+
+Writes contents to a file in JSON format
+
+  Arguments: One filename
+  Returns:   self
+
+=back
+
+=cut
+
+sub writeJson{
+  my($self, $filename) = @_;
+
+  my $json=JSON->new;
+  $json->utf8;           # If we only expect characters 0..255. Makes it fast.
+  $json->allow_nonref;   # can convert a non-reference into its corresponding string
+  $json->allow_blessed;  # encode method will not barf when it encounters a blessed reference
+  $json->pretty;         # enables indent, space_before and space_after
+  
+  my $hash={};
+  for my $key(qw(kmer preserveCase alphabet canonical sketchSize hashType hashBits hashSeed sketches)){
+    $$hash{$key} = $$self{$key};
+  }
+  open(my $fh, ">", $filename) or die "ERROR: could not write to $filename: $!";
+  print $fh $json->encode($hash);
+  close $fh;
+
   return $self;
 }
 

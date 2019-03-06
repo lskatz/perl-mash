@@ -11,7 +11,7 @@ use_ok("Mash");
 
 my $mash = which("mash");
 ok($mash, "Found Mash executable");
-diag "Path for Mash: $mash";
+note "Path for Mash: $mash";
 
 sub which{
   my($exec)=@_;
