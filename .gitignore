@@ -33,3 +33,14 @@ inc/
 /MANIFEST.bak
 /pm_to_blib
 /*.zip
+
+# Converted mash files
+t/data/PNUSAL003567_R1_.fastq.gz.msh.json
+t/data/PNUSAL003567_R1_.fastq.gz.msh.json.gz
+t/data/PNUSAL003567_R2_.fastq.gz.msh.json
+t/data/PNUSAL003567_R2_.fastq.gz.msh.json.gz
+
+# source files for mash and capnproto
+bin/Mash*
+lib/capnproto*/
+
