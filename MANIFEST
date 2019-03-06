@@ -1,6 +1,11 @@
+.travis.yml
+bin/v2.1.1.tar.gz
+lib/capnproto-c++-0.7.0.tar.gz
 lib/Mash.pm
 Makefile.PL
 MANIFEST			This list of files
+README
+README.pod
 t/00_setup.t
 t/01_env.t
 t/02_makeSketches.t
