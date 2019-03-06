@@ -9,7 +9,6 @@ addons:
       - zlib1g
       - zlib1g-dbg
       - zlib1g-dev
-      - zlib1g-udeb
       - zlibc
 perl:
   - "5.24-shrplib"
