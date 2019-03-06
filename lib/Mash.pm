@@ -9,7 +9,7 @@ use Data::Dumper;
 use JSON ();
 use Encode qw/encode decode/;
 
-our $VERSION = 0.2;
+our $VERSION = 0.3;
 
 our @EXPORT_OK = qw(raw_mash_distance);
 
@@ -337,9 +337,6 @@ hashes are already sorted.
 sub raw_mash_distance{
   my($hashes1, $hashes2) = @_;
 
-  #my @sketch1 = sort {$a <=> $b} @$hashes1;
-  #my @sketch2 = sort {$a <=> $b} @$hashes2;
-
   my $i      = 0;
   my $j      = 0;
   my $common = 0;
@@ -362,7 +359,8 @@ sub raw_mash_distance{
     $total += 1;
   }
 
-  if($total < $sketch_size){
+  #if($total < $sketch_size){
+  if($total < $sketch_size || $total < $sketch_size2){
     if($i < $sketch_size){
       $total += $sketch_size - 1;
     }
@@ -379,6 +377,33 @@ sub raw_mash_distance{
   return ($common, $total);
 }
 
+=pod
+
+=over
+
+=item $msh->fix()
+
+Fixes a mash sketch if it is broken at all. For now this
+just sorts hashes but this subroutine could contain more
+fixes in the future.
+
+  Arguments: None
+  Returns:   $self
+
+=back
+
+=cut
+
+sub fix{
+  my($self) = @_;
+
+  for my $sketches(@{ $self->{sketches} }){
+    my @sortedHashes = sort {$a <=> $b} @{ $$sketches{hashes} };
+    $$sketches{hashes} = \@sortedHashes;
+  }
+
+  return $self;
+}
 
 ##### Utility methods
 
