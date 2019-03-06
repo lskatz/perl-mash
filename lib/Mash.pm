@@ -9,7 +9,7 @@ use Data::Dumper;
 use JSON ();
 use Encode qw/encode decode/;
 
-our $VERSION = 0.3;
+our $VERSION = 0.4;
 
 our @EXPORT_OK = qw(raw_mash_distance);
 
