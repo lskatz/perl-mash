@@ -7,7 +7,7 @@ use FindBin qw/$RealBin/;
 use lib "$RealBin/../lib";
 
 use Test::More tests=>2;
-use_ok("Mash");
+use_ok("Bio::Sketch::Mash");
 
 my $mash = which("mash");
 ok($mash, "Found Mash executable");

@@ -8,7 +8,7 @@ use FindBin qw/$RealBin/;
 use lib "$RealBin/../lib";
 
 use Test::More tests=>3;
-use Mash;
+use Bio::Sketch::Mash;
 my %expected = (
   "PNUSAL003567_R2_.fastq.gz" => {
     "PNUSAL003567_R1_.fastq.gz" => 0.0134525,
@@ -19,8 +19,8 @@ my %expected = (
 );
 
 # Distances between two mash sketches
-my $sketch1 = Mash->new("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh");
-my $sketch2 = Mash->new("$RealBin/data/PNUSAL003567_R2_.fastq.gz.msh");
+my $sketch1 = Bio::Sketch::Mash->new("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh");
+my $sketch2 = Bio::Sketch::Mash->new("$RealBin/data/PNUSAL003567_R2_.fastq.gz.msh");
 my $distHash = $sketch1->distance($sketch2);
 is_deeply($distHash, \%expected, "Mash distances for msh");
 
@@ -44,16 +44,16 @@ close $fh2;
 close $out2;
 
 # Distances between JSON files
-$sketch1 = Mash->new("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh.json");
-$sketch2 = Mash->new("$RealBin/data/PNUSAL003567_R2_.fastq.gz.msh.json");
+$sketch1 = Bio::Sketch::Mash->new("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh.json");
+$sketch2 = Bio::Sketch::Mash->new("$RealBin/data/PNUSAL003567_R2_.fastq.gz.msh.json");
 $distHash = $sketch1->distance($sketch2);
 is_deeply($distHash, \%expected, "Mash distances for JSON");
 
 # Distance between the JSON.gz equivalent
 system("gzip -c9 $RealBin/data/PNUSAL003567_R1_.fastq.gz.msh.json > $RealBin/data/PNUSAL003567_R1_.fastq.gz.msh.json.gz");
 system("gzip -c9 $RealBin/data/PNUSAL003567_R2_.fastq.gz.msh.json > $RealBin/data/PNUSAL003567_R2_.fastq.gz.msh.json.gz");
-$sketch1 = Mash->new("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh.json.gz");
-$sketch2 = Mash->new("$RealBin/data/PNUSAL003567_R2_.fastq.gz.msh.json.gz");
+$sketch1 = Bio::Sketch::Mash->new("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh.json.gz");
+$sketch2 = Bio::Sketch::Mash->new("$RealBin/data/PNUSAL003567_R2_.fastq.gz.msh.json.gz");
 $distHash = $sketch1->distance($sketch2);
 is_deeply($distHash, \%expected, "Mash distances for JSON.gz");
 

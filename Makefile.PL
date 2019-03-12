@@ -13,13 +13,14 @@ my $preop =
 '';
 
 WriteMakefile1(
-  NAME         => 'Mash',
-  VERSION_FROM => 'lib/Mash.pm',
+  NAME         => 'Bio::Sketch::Mash',
+  VERSION_FROM => 'lib/Bio/Sketch/Mash.pm',
   EXE_FILES    => [
     #"bin/Mash/mash",
   ],
   PREREQ_PM    => {
     # Core modules
+    'Bio::Sketch'    => 0,
     'File::Basename' => 0,
     'Data::Dumper'   => 0,
     'List::Util'     => 0,

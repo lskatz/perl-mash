@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-package Mash;
+package Bio::Sketch::Mash;
 use strict;
 use warnings;
 use Exporter qw(import);
@@ -9,7 +9,9 @@ use Data::Dumper;
 use JSON ();
 use Encode qw/encode decode/;
 
-our $VERSION = 0.5;
+&implements( 'Bio::Sketch' );
+
+our $VERSION = 0.6;
 
 our @EXPORT_OK = qw(raw_mash_distance);
 
@@ -22,7 +24,7 @@ use overload '""' => 'toString';
 
 =head1 NAME
 
-Mash
+Bio::Sketch::Mash
 
 =head1 SYNOPSIS
 
@@ -30,7 +32,7 @@ A module to read `mash info` output and transform it
 
   use strict;
   use warnings;
-  use Mash;
+  use Bio::Sketch::Mash;
 
   # Sketch all fastq files into one mash file.
   # Mash sketching is not implemented in this module.
@@ -38,15 +40,15 @@ A module to read `mash info` output and transform it
   die if $?;
 
   # Read the mash file.
-  my $msh = Mash->new("all.msh");
+  my $msh = Bio::Sketch::Mash->new("all.msh");
   # All-vs-all distances
   my $distHash = $msh->dist($msh);
 
   # Read a mash file, write it to a json-formatted file
-  my $msh2 = Mash->new("all.msh");
+  my $msh2 = Bio::Sketch::Mash->new("all.msh");
   $msh2->writeJson("all.json");
   # Read the json file
-  my $mashJson = Mash->new("all.json");
+  my $mashJson = Bio::Sketch::Mash->new("all.json");
   my $dist = $msh2->dist($mashJson); # yields a zero distance
 
 =head1 DESCRIPTION
@@ -57,13 +59,13 @@ This is a module to read mash files produced by the Mash executable. For more in
 
 =over
 
-=item Mash->new("filename.msh",\%options);
+=item Bio::Sketch::Mash->new("filename.msh",\%options);
 
-Create a new instance of Mash.  One object per set of files.
+Create a new instance of Bio::Sketch::Mash.  One object per set of files.
 
   Arguments:  Sketch filename (valid types/extensions are .msh, .json, .json.gz)
               Hash of options (none so far)
-  Returns:    Mash object
+  Returns:    Bio::Sketch::Mash object
 
 =back
 
@@ -255,7 +257,7 @@ this object and another object. If there are multiple sketches per
 object, then all sketches in this object will be compared against
 all sketches in the other object.
 
-  Arguments: One Mash object
+  Arguments: One Bio::Sketch::Mash object
   Returns:   reference to a hash of hashes. Each value is a number.
 
 Aliases: distance(), mashDist()
@@ -310,7 +312,7 @@ sub mashDist{
 
 =over
 
-=item Mash::raw_mash_distance($array1, $array2)
+=item Bio::Sketch::Mash::raw_mash_distance($array1, $array2)
 
 Returns the number of sketches in common and the total number of sketches between two lists.
 The return type is an array of two elements.
@@ -325,7 +327,7 @@ hashes are already sorted.
     
     my $R1 = [1,2,3];
     my $R2 = [1,2,4];
-    my($common, $total) = Mash::raw_mash_distance($R1,$R2);
+    my($common, $total) = Bio::Sketch::Mash::raw_mash_distance($R1,$R2);
     # $common => 2
     # $total  => 3
 
@@ -409,7 +411,7 @@ sub fix{
 
 sub toString{
   my($self)=@_;
-  my $return="Mash object with " .scalar(@{ $self->{sketches} })." file(s):\n";
+  my $return="Bio::Sketch::Mash object with " .scalar(@{ $self->{sketches} })." file(s):\n";
   for my $sketch(@{ $self->{sketches} }){
     $return.=$$sketch{name}."\n";
   }

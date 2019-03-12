@@ -8,9 +8,9 @@ use JSON ();
 use lib "$RealBin/../lib";
 
 use Test::More tests=>1;
-use Mash;
+use Bio::Sketch::Mash;
 
-my $msh = Mash->new("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh"); 
+my $msh = Bio::Sketch::Mash->new("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh"); 
 $msh->writeJson("$RealBin/data/PNUSAL003567_R1_.fastq.gz.msh.json");
 
 my $mashInfo = `mash info -d $RealBin/data/PNUSAL003567_R1_.fastq.gz.msh`;
