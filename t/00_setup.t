@@ -20,8 +20,18 @@ if($mashExe){
 } else {
   subtest "Install prerequisites" => sub{
     plan tests => 2;
-    system("
-      cd lib && tar zxvf capnproto-c++-0.7.0.tar.gz && cd capnproto-c++-0.7.0 && ./configure --prefix=$RealBin/../lib/capnproto && make -j $numcpus check && make install
+    diag "uncompressing capnproto";
+    system("cd lib && tar zxvf capnproto-c++-0.7.0.tar.gz");
+    if($?){
+      BAIL_OUT("Failed the untarring of capnp");
+    }
+    diag "Configuring capnproto";
+    system("cd lib/capnproto-c++-0.7.0 && ./configure --prefix=$RealBin/../lib/capnproto");
+    if($?){
+      BAIL_OUT("Failed the configuration of capnp");
+    }
+    diag "making capnproto";
+    system("cd lib/capnproto-c++-0.7.0 && make -j $numcpus check && make install
     ");
     if($?){
       BAIL_OUT("Failed the installation of capnp");
@@ -32,6 +42,7 @@ if($mashExe){
     } else {
       BAIL_OUT("Could not install capnp");
     }
+    diag "Installing Mash";
     system("
       cd bin && tar zxvf v2.1.1.tar.gz && cd Mash-2.1.1 && sh bootstrap.sh && ./configure --prefix=$RealBin/../bin/Mash --with-capnp=$RealBin/../lib/capnproto && make -j $numcpus
     ");
