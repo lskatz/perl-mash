@@ -12,6 +12,7 @@ use_ok("Bio::Sketch::Mash");
 
 my $mash = which("mash");
 ok($mash, "Found Mash executable");
+$mash||="";
 note "Path for Mash: $mash";
 
 sub which{
