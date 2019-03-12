@@ -2,6 +2,7 @@
 package Bio::Sketch::Mash;
 use strict;
 use warnings;
+use Class::Interface qw/implements/;
 use Exporter qw(import);
 use File::Basename qw/fileparse basename dirname/;
 use Data::Dumper;
