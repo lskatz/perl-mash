@@ -6,7 +6,8 @@ use File::Spec;
 use FindBin qw/$RealBin/;
 use lib "$RealBin/../lib";
 
-use Test::More tests=>2;
+use Test::More tests=>3;
+use_ok("Bio::Sketch");
 use_ok("Bio::Sketch::Mash");
 
 my $mash = which("mash");

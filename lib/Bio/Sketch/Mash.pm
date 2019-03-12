@@ -12,7 +12,7 @@ use Encode qw/encode decode/;
 
 &implements( 'Bio::Sketch' );
 
-our $VERSION = 0.6;
+our $VERSION = 0.7;
 
 our @EXPORT_OK = qw(raw_mash_distance);
 
@@ -20,6 +20,15 @@ local $0=basename $0;
 
 # If this is used in a scalar context, $self->toString() is called
 use overload '""' => 'toString';
+
+# These functions are unimplemented but have to be
+# listed because of the interface.
+sub sketch{
+  ...;
+}
+sub paste{
+  ...;
+}
 
 =pod
 
