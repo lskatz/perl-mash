@@ -1,9 +1,7 @@
 .travis.yml
 bin/v2.1.1.tar.gz
-Bio-Sketch-Mash-0.8.tar
 lib/Bio/Sketch/Mash.pm
 lib/capnproto-c++-0.7.0.tar.gz
-lib/Mash.pm
 Makefile.PL
 MANIFEST			This list of files
 README
