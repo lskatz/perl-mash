@@ -12,7 +12,7 @@ use Encode qw/encode decode/;
 
 &implements( 'Bio::Sketch' );
 
-our $VERSION = 0.7;
+our $VERSION = 0.8;
 
 our @EXPORT_OK = qw(raw_mash_distance);
 
