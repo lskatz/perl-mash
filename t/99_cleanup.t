@@ -1,4 +1,6 @@
 #!/usr/bin/env perl
+#
+#NOTE: this script will clean up all leftover files
 
 use strict;
 use warnings;
