@@ -34,7 +34,7 @@ sub paste{
 
 =head1 NAME
 
-Bio::Sketch::Mash
+Bio::Sketch::Mash - Transform Mash Info.
 
 =head1 SYNOPSIS
 
